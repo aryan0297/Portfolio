@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+build
+*.log
+.DS_Store
+.vercel
+next-env.d.ts
+*.tsbuildinfo
+
+# Secrets stay local. `.env.example` is committed on purpose.
+.env
+.env*.local
