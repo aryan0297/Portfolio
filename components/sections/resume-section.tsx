@@ -34,7 +34,7 @@ export function ResumeSection() {
       <SectionHeading
         id="resume"
         eyebrow="Resume"
-        title="The one-page version"
+        title="The short version"
         description="Download the full PDF, or open it in a new tab."
       />
 
@@ -74,7 +74,7 @@ export function ResumeSection() {
               </div>
             </div>
 
-            <p className="mt-4 text-center font-mono text-[11px] text-muted">PDF · A4 · 1 page</p>
+            <p className="mt-4 text-center font-mono text-[11px] text-muted">PDF · A4 · 2 pages</p>
           </GlassCard>
         </Reveal>
 
