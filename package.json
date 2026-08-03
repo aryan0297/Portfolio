@@ -22,7 +22,7 @@
     "framer-motion": "^11.11.11",
     "gsap": "^3.15.0",
     "lucide-react": "^0.462.0",
-    "next": "^15.5.6",
+    "next": "15.5.9",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
