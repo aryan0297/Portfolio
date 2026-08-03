@@ -14,6 +14,41 @@ import { hasErrors, validateContactForm } from '@/utils/validation';
 
 const EMPTY: ContactFormValues = { name: '', email: '', subject: '', message: '' };
 
+/** Plain-text rendering of the form, used by both the mailto: body and the clipboard fallback. */
+function composeMessage(values: ContactFormValues): string {
+  return `${values.message}\n\n— ${values.name} (${values.email})`;
+}
+
+/**
+ * Opens the user's mail client with the message prefilled.
+ *
+ * `window.location.href = 'mailto:…'` silently no-ops on machines with no
+ * registered mail handler — which is exactly what a dead Send button looks
+ * like. A synthesised anchor click is handled far more consistently, and the
+ * caller pairs this with a clipboard copy so the text is never lost either way.
+ */
+function openMailClient(values: ContactFormValues, to: string): void {
+  const url = `mailto:${to}?subject=${encodeURIComponent(values.subject)}&body=${encodeURIComponent(
+    composeMessage(values),
+  )}`;
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 interface FieldProps {
   id: keyof ContactFormValues;
   label: string;
@@ -99,13 +134,19 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const update = (field: keyof ContactFormValues) => (value: string) => {
-    setValues((prev) => {
-      const next = { ...prev, [field]: value };
-      // Only re-validate fields the user has already been told about.
-      if (errors[field]) {
-        setErrors((prevErrors) => ({ ...prevErrors, [field]: validateContactForm(next)[field] }));
-      }
-      return next;
+    const next = { ...values, [field]: value };
+    setValues(next);
+
+    // Only re-validate fields the user has already been told about. This runs
+    // outside the state updater on purpose — an updater must stay pure, and
+    // under StrictMode a nested setState there fires twice.
+    if (!errors[field]) return;
+
+    const fieldError = validateContactForm(next)[field];
+    setErrors((prev) => {
+      if (fieldError) return { ...prev, [field]: fieldError };
+      const { [field]: _cleared, ...rest } = prev;
+      return rest;
     });
   };
 
@@ -119,29 +160,47 @@ export function ContactForm() {
       return;
     }
 
-    if (!isEmailJsConfigured) {
-      const body = encodeURIComponent(`${values.message}\n\n— ${values.name} (${values.email})`);
-      window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(values.subject)}&body=${body}`;
-      toast.info('Opening your email client', {
-        description: 'Direct sending is not configured yet — your message has been prefilled.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     try {
-      await sendContactEmail(values);
-      setValues(EMPTY);
-      toast.success('Message sent', {
-        description: "Thanks for reaching out — I'll get back to you shortly.",
-      });
-    } catch {
-      toast.error('Could not send the message', {
-        description: `Please email me directly at ${profile.email}.`,
-      });
+      if (isEmailJsConfigured) {
+        await sendContactEmail(values);
+        setValues(EMPTY);
+        setErrors({});
+        toast.success('Message sent', {
+          description: "Thanks for reaching out — I'll get back to you shortly.",
+        });
+        return;
+      }
+
+      await fallbackToMailClient('Direct sending is not configured yet.');
+    } catch (error) {
+      // Sending failed for real — never leave the user with a dead button and a
+      // lost message. Hand them the mail client plus a copy of the text.
+      const detail = error instanceof Error ? error.message : 'Unknown error.';
+      if (process.env.NODE_ENV !== 'production') console.error('[contact] send failed:', error);
+      await fallbackToMailClient(detail);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  /** Shared escape hatch for both "not configured" and "send failed". */
+  const fallbackToMailClient = async (reason: string) => {
+    openMailClient(values, profile.email);
+    const copied = await copyToClipboard(composeMessage(values));
+
+    toast.info('Opening your email client', {
+      description: `${reason} Your message has been prefilled${
+        copied ? ' and copied to your clipboard' : ''
+      } — send it to ${profile.email}.`,
+      duration: 10_000,
+      action: {
+        label: 'Copy address',
+        onClick: () => {
+          void copyToClipboard(profile.email);
+        },
+      },
+    });
   };
 
   return (
@@ -201,10 +260,11 @@ export function ContactForm() {
         </Button>
 
         {!isEmailJsConfigured && (
-          // Visible only in development so the gap is obvious before deploy.
+          // Set NEXT_PUBLIC_EMAILJS_* in .env.local (and in the host's env vars)
+          // to enable direct sending; this notice disappears once they are set.
           <p className="text-[11px] text-muted">
-            {/* TODO(aryan): set NEXT_PUBLIC_EMAILJS_* in .env.local to enable direct sending. */}
-            Direct sending is not configured — submitting opens your email client instead.
+            Direct sending is not configured — submitting opens your email client with the
+            message prefilled instead.
           </p>
         )}
       </form>
