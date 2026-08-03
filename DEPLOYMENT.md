@@ -28,7 +28,10 @@ git push -u origin main
 2. Framework preset: **Next.js** (auto-detected).
 3. Build command: `next build` · Output: `.next` · Install: `npm install`.
    Leave all of these on the defaults.
-4. Node version: **20.x** (Project Settings → General).
+4. Node version: **24.x** (Project Settings → General). This must match
+   `engines.node` in `package.json` and `.nvmrc`, or Vercel builds on a
+   different runtime than you test against. Node 20 is **end-of-life** and
+   should not be selected.
 5. Do **not** deploy yet — add the environment variables first.
 
 ---
@@ -138,7 +141,7 @@ successful build → **⋯ → Promote to Production**. Instant, no rebuild.
 
 ## Deploying elsewhere
 
-Any Node 20 host works:
+Any Node 24 host works:
 
 ```bash
 npm ci

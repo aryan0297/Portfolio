@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,32 +20,37 @@
     "@react-three/fiber": "^9.7.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.11.11",
+    "framer-motion": "^11.18.2",
     "gsap": "^3.15.0",
     "lucide-react": "^0.462.0",
-    "next": "^15.5.6",
+    "next": "^15.5.22",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sonner": "^1.7.4",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^2.6.1",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.169.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "^24.13.3",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@types/three": "^0.169.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.6",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.16",
-    "typescript": "^5.6.3"
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^15.5.22",
+    "postcss": "^8.5.25",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": "24.x"
   }
 }

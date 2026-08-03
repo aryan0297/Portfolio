@@ -36,9 +36,26 @@ Other scripts:
 ```bash
 npm run build      # production build
 npm run start      # serve the production build
-npm run lint       # ESLint (next/core-web-vitals)
+npm run lint       # ESLint 9 flat config (next/core-web-vitals)
+npm run lint:fix   # …and autofix
 npm run typecheck  # tsc --noEmit
 ```
+
+Node **24.x** is pinned in `engines` and `.nvmrc`; Vercel's project Node
+version must match.
+
+### Dependency policy
+
+- `npm audit` must report **0 vulnerabilities** before a deploy.
+- `overrides` in `package.json` force patched `postcss` and `sharp` versions.
+  Next pins `postcss@8.4.31` exactly and `sharp@^0.34.x` in its own dependency
+  block, and both carry advisories; no released Next version has bumped them
+  yet, so the override is the only fix short of forking. **Re-check on each
+  Next upgrade** — once Next ships patched pins, delete the overrides.
+- ESLint is on 9.x flat config (`eslint.config.mjs`). Do not go back to
+  `.eslintrc.json` + `next lint`: ESLint 8 is EOL and drags in the deprecated
+  `rimraf@3` / `glob@7` / `inflight@1` / `@humanwhocodes/*` chain, and
+  `next lint` is removed in Next 16.
 
 ---
 
