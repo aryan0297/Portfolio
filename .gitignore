@@ -9,5 +9,7 @@ next-env.d.ts
 *.tsbuildinfo
 
 # Secrets stay local. `.env.example` is committed on purpose.
-.env
-.env*.local
+# `.env*` covers .env.local, .env.production, .env.test — all of which can
+# legitimately hold real keys in a Next.js project.
+.env*
+!.env.example

@@ -10,7 +10,13 @@ import { Preloader } from '@/components/effects/preloader';
 import { ScrollProgress } from '@/components/effects/scroll-progress';
 import { Footer } from '@/components/layout/footer';
 import { Navbar } from '@/components/layout/navbar';
-import { personJsonLd, projectsJsonLd, siteMetadata, websiteJsonLd } from '@/lib/seo';
+import {
+  jsonLdScript,
+  personJsonLd,
+  projectsJsonLd,
+  siteMetadata,
+  websiteJsonLd,
+} from '@/lib/seo';
 
 import './globals.css';
 
@@ -59,15 +65,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
          */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(personJsonLd()) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd()) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(projectsJsonLd()) }}
         />
         <Preloader />
         <AmbientBackground />

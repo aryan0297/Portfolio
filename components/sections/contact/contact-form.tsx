@@ -10,7 +10,7 @@ import { profile } from '@/constants/profile';
 import { isEmailJsConfigured, sendContactEmail } from '@/lib/emailjs';
 import { cn } from '@/lib/utils';
 import type { ContactFormErrors, ContactFormValues } from '@/types';
-import { hasErrors, validateContactForm } from '@/utils/validation';
+import { hasErrors, validateContactForm, CONTACT_LIMITS } from '@/utils/validation';
 
 const EMPTY: ContactFormValues = { name: '', email: '', subject: '', message: '' };
 
@@ -57,6 +57,7 @@ interface FieldProps {
   multiline?: boolean;
   value: string;
   error?: string;
+  maxLength: number;
   onChange: (value: string) => void;
 }
 
@@ -69,6 +70,7 @@ function Field({
   multiline = false,
   value,
   error,
+  maxLength,
   onChange,
 }: FieldProps) {
   const shared = cn(
@@ -89,6 +91,7 @@ function Field({
           name={id}
           rows={5}
           value={value}
+          maxLength={maxLength}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={Boolean(error)}
@@ -101,6 +104,7 @@ function Field({
           name={id}
           type={type}
           value={value}
+          maxLength={maxLength}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={Boolean(error)}
@@ -213,6 +217,7 @@ export function ContactForm() {
             placeholder="Jane Doe"
             value={values.name}
             error={errors.name}
+            maxLength={CONTACT_LIMITS.name}
             onChange={update('name')}
           />
           <Field
@@ -222,6 +227,7 @@ export function ContactForm() {
             placeholder="jane@company.com"
             value={values.email}
             error={errors.email}
+            maxLength={CONTACT_LIMITS.email}
             onChange={update('email')}
           />
         </div>
@@ -232,6 +238,7 @@ export function ContactForm() {
           placeholder="Backend role / project enquiry"
           value={values.subject}
           error={errors.subject}
+          maxLength={CONTACT_LIMITS.subject}
           onChange={update('subject')}
         />
 
@@ -242,6 +249,7 @@ export function ContactForm() {
           placeholder="Tell me what you're building and where you need backend or AI automation help."
           value={values.message}
           error={errors.message}
+          maxLength={CONTACT_LIMITS.message}
           onChange={update('message')}
         />
 

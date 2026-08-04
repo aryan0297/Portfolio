@@ -144,3 +144,14 @@ export function websiteJsonLd() {
     author: { '@type': 'Person', name: profile.name },
   };
 }
+
+/**
+ * Serialises a JSON-LD object for inline `<script>` injection.
+ *
+ * The payloads above are built entirely from compile-time constants, but
+ * escaping `<` guarantees a `</script>` breakout can never terminate the
+ * element early — defence in depth if any future value becomes user-controlled.
+ */
+export function jsonLdScript(data: object): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
