@@ -22,8 +22,8 @@ export const profile: Profile = {
     'Building scalable backend systems, intelligent AI automation, and production-ready APIs that solve real-world business problems.',
   location: 'Jabalpur, Madhya Pradesh, India · Remote friendly',
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'tiwariaryan668@gmail.com',
-  githubUsername: GITHUB_USERNAME,
-  githubUrl: `https://github.com/${GITHUB_USERNAME}`,
+  githubUsername: aryan0297,
+  githubUrl: `https://github.com/aryan0297`,
   // TODO(aryan): swap in the real LinkedIn URL.
   linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? 'https://www.linkedin.com/in/aryantiwari-dev',
   resumePath: '/resume/Aryan-Tiwari-Resume.pdf',
